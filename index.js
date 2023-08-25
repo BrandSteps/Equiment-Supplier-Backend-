@@ -35,6 +35,27 @@ app.use(express.json());
 app.get('/' , (req,res)=> {
   res.send('Ahemd Raza ')
 })
+app.get('/api/v1/search', async (req, res) => {
+  try {
+    const searchQuery = req.query.query;
+
+    if (!searchQuery) {
+      return res.status(400).json({ message: "Search query missing" });
+    }
+
+    const products = await tweetModel.find({
+      $or: [
+        { name: { $regex: searchQuery, $options: 'i' } },
+        { category: { $regex: searchQuery, $options: 'i' } }
+      ]
+    });
+
+    res.json({ data: products });
+  } catch (error) {
+    console.log("Error in searching products: ", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 app.get('/api/v1/paginatpost', async (req, res) => {
   try {
     let query = tweetModel.find();
@@ -75,7 +96,7 @@ app.get('/api/v1/paginatpost', async (req, res) => {
 app.get('/api/v1/products', async (req, res) => {
   try {
     const result = await tweetModel.find().exec(); // Using .exec() to execute the query
-    console.log(result);
+    // console.log(result);
     res.send({
       message: "Got all products successfully",
       data: result
@@ -360,6 +381,23 @@ app.get('/api/v1/profile', (req, res) => {
   }
   getData()
 })
+app.post('/logout', (req, res) => {
+  try {
+    // Clear the token from the client-side by setting an expired cookie
+    res.cookie('Token', '', {
+      maxAge: 0,
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true
+    });
+
+    res.send({ message: "Logout successful" });
+  } catch (error) {
+    console.log("error: ", error);
+    res.status(500).send({ message: "Logout failed, please try later" });
+  }
+});
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
