@@ -17,11 +17,7 @@ import path from 'path';
 import { tweetModel } from './Models/User.js';
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }))
-app.use(cors({
-  origin: ['https://www.equipmentsuppliers.co.uk', "*"],
-  credentials: true
-}));
-
+app.use(cors());
 // app.use(express.json());
 const storage = multer.diskStorage({
   destination: '/tmp',
