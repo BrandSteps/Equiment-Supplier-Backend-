@@ -17,7 +17,7 @@ import path from 'path';
 import { tweetModel } from './Models/User.js';
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }))
-pp.use(cors({
+app.use(cors({
   origin: [   'http://www.equipmentsuppliers.co.uk'   , "*"],
   credentials: true
 }));
