@@ -17,14 +17,8 @@ import path from 'path';
 import { tweetModel } from './Models/User.js';
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }))
-app.use(function(req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
-});
-
+app.use(cors());
+// app.use(express.json());
 const storage = multer.diskStorage({
   destination: '/tmp',
   filename: function (req, file, cb) {
@@ -38,6 +32,7 @@ app.use(express.json());
 app.get('/' , (req,res)=> {
   res.send('Ahemd Raza ')
 })
+
 app.get('/api/search', async (req, res) => {
   const searchTerm = req.query.q;
   try {
@@ -47,6 +42,8 @@ app.get('/api/search', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
 app.get('/api/v1/paginatpost', async (req, res) => {
   try {
     let query = tweetModel.find();
