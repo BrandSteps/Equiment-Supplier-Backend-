@@ -17,7 +17,10 @@ import path from 'path';
 import { tweetModel } from './Models/User.js';
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }))
-app.use(cors());
+pp.use(cors({
+  origin: [   'http://www.equipmentsuppliers.co.uk'   , "*"],
+  credentials: true
+}));
 // app.use(express.json());
 const storage = multer.diskStorage({
   destination: '/tmp',
@@ -32,27 +35,18 @@ app.use(express.json());
 app.get('/' , (req,res)=> {
   res.send('Ahemd Raza ')
 })
-app.get('/api/v1/search', async (req, res) => {
+
+app.get('/api/search', async (req, res) => {
+  const searchTerm = req.query.q;
   try {
-    const searchQuery = req.query.query;
-
-    if (!searchQuery) {
-      return res.status(400).json({ message: "Search query missing" });
-    }
-
-    const products = await tweetModel.find({
-      $or: [
-        { name: { $regex: searchQuery, $options: 'i' } },
-        { category: { $regex: searchQuery, $options: 'i' } }
-      ]
-    });
-
-    res.json({ data: products });
+    const results = await tweetModel.find({ name: new RegExp(searchTerm, 'i') });
+    res.json(results);
   } catch (error) {
-    console.log("Error in searching products: ", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
 app.get('/api/v1/paginatpost', async (req, res) => {
   try {
     let query = tweetModel.find();
