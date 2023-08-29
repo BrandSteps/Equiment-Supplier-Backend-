@@ -25,7 +25,6 @@ app.use(function(req, res, next) {
   next();
 });
 
-// app.use(express.json());
 const storage = multer.diskStorage({
   destination: '/tmp',
   filename: function (req, file, cb) {
@@ -39,7 +38,6 @@ app.use(express.json());
 app.get('/' , (req,res)=> {
   res.send('Ahemd Raza ')
 })
-
 app.get('/api/search', async (req, res) => {
   const searchTerm = req.query.q;
   try {
@@ -49,8 +47,6 @@ app.get('/api/search', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
 app.get('/api/v1/paginatpost', async (req, res) => {
   try {
     let query = tweetModel.find();
