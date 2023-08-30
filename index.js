@@ -293,6 +293,36 @@ app.post('/login', async (req, res) => {
     res.status(500).send({ message: "login failed, please try later" });
   }
 });
+app.get('/api/v1/profile', (req, res) => {
+  const _id = req.body.token._id
+  const getData = async () => {
+    try {
+      const user = await User.findOne({ _id: _id }, "email password username -_id").exec()
+      if (!user) {
+        res.status(404).send({})
+        return;
+      } else {
+
+        res.set({
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0",
+          "Surrogate-Control": "no-store"
+        });
+        res.status(200).send(user)
+      }
+
+    } catch (error) {
+
+      console.log("error: ", error);
+      res.status(500).send({
+        message: "something went wrong on server",
+      });
+    }
+
+  }
+  getData()
+})
 app.use('/api/v1', (req, res, next) => {
 
   console.log("req.cookies: ", req.cookies.Token);
@@ -333,36 +363,6 @@ app.use('/api/v1', (req, res, next) => {
       res.status(401).send("invalid token")
     }
   });
-})
-app.get('/api/v1/profile', (req, res) => {
-  const _id = req.body.token._id
-  const getData = async () => {
-    try {
-      const user = await User.findOne({ _id: _id }, "email password username -_id").exec()
-      if (!user) {
-        res.status(404).send({})
-        return;
-      } else {
-
-        res.set({
-          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-          "Pragma": "no-cache",
-          "Expires": "0",
-          "Surrogate-Control": "no-store"
-        });
-        res.status(200).send(user)
-      }
-
-    } catch (error) {
-
-      console.log("error: ", error);
-      res.status(500).send({
-        message: "something went wrong on server",
-      });
-    }
-
-  }
-  getData()
 })
 app.post('/logout', (req, res) => {
   try {
