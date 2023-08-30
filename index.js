@@ -16,11 +16,9 @@ import fs from 'fs';
 import path from 'path';
 import { tweetModel } from './Models/User.js';
 app.use(cookieParser());
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }))
-app.use(cors({
-  origin: [   'http://www.equipmentsuppliers.co.uk'   , "*"],
-  credentials: true
-}));
+app.use(cors());
 const storage = multer.diskStorage({
   destination: '/tmp',
   filename: function (req, file, cb) {
@@ -30,7 +28,6 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage });
-app.use(express.json());
 app.post('/signup', async (req, res) => {
   try {
     const { username, email, password } = req.body;
